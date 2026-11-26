@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+/* POS: conserva tres tarjetas por fila en teléfonos y evita overflow en selectores */
+@media (max-width: 640px) {
+  .pos-mobile-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .pos-mobile-card { min-width: 0; padding: .625rem; }
+  .pos-mobile-card p { overflow-wrap: anywhere; }
+  .pos-size-dialog { width: min(100%, 30rem); max-height: calc(100dvh - 1.5rem); overflow-y: auto; overscroll-behavior: contain; }
+  .pos-size-backdrop { position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; padding: .75rem; background: rgb(15 23 42 / .55); }
+}
+
 @theme {
   --color-brand-50: #f0fdf9;
   --color-brand-100: #ccfbef;

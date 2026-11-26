@@ -45,6 +45,7 @@ function DashboardPage() {
   const [branches, setBranches] = useState<Branch[]>([])
   const [selectedBranchId, setSelectedBranchId] = useState('')
   const [section, setSection] = useViewState('inicio')
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const organizationId = session?.membership?.organization_id ?? ''
 
   useEffect(() => {
@@ -65,21 +66,24 @@ function DashboardPage() {
 
   return (
     <main className="min-h-screen bg-slate-50">
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
           <div className="flex items-center gap-3">
             <div className="flex size-9 items-center justify-center rounded-xl bg-brand-600 font-black text-white">J</div>
             <span className="text-lg font-bold tracking-tight text-ink-950">JugoSoft</span>
           </div>
-          <button className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-100" onClick={() => void authService.signOut()}>Cerrar sesión</button>
+          <div className="flex items-center gap-2">
+            <button className="rounded-lg px-2 py-2 text-xs font-semibold text-slate-600 transition hover:bg-slate-100 sm:px-3 sm:text-sm" onClick={() => void authService.signOut()}>Cerrar sesión</button>
+            <button className="rounded-lg border border-slate-200 px-3 py-2 text-sm font-bold text-slate-700 lg:hidden" aria-expanded={mobileMenuOpen} aria-controls="app-navigation" onClick={() => setMobileMenuOpen((open) => !open)}>{mobileMenuOpen ? 'Cerrar menú' : '☰ Menú'}</button>
+          </div>
         </div>
       </header>
-      <section className="mx-auto grid max-w-6xl gap-8 px-6 py-10 lg:grid-cols-[13rem_1fr]">
-        <nav className="h-fit rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
+      <section className="mx-auto grid w-full max-w-6xl min-w-0 grid-cols-[minmax(0,1fr)] gap-4 overflow-x-hidden px-3 py-4 sm:gap-8 sm:px-6 sm:py-8 lg:grid-cols-[13rem_minmax(0,1fr)]">
+        <nav id="app-navigation" className={`${mobileMenuOpen ? 'block' : 'hidden'} h-fit rounded-2xl border border-slate-200 bg-white p-3 shadow-sm lg:sticky lg:top-24 lg:block`}>
           <p className="px-3 py-2 text-xs font-bold uppercase tracking-wider text-slate-400">Navegación</p>
-          {([['inicio','Inicio'],['sucursales','Sucursales'],['catalogo','Catálogo'],['inventario','Inventario'],['produccion','Producción'],['ventas','Punto de Venta'],['tickets','Tickets'],['clientes','Clientes']] as const).map(([key,label])=><button key={key} onClick={()=>setSection(key)} className={`mt-1 block w-full rounded-xl px-3 py-2.5 text-left text-sm font-medium transition ${section===key?'bg-brand-50 font-semibold text-brand-700':'text-slate-600 hover:bg-slate-50'}`}>{label}</button>)}
+          {([['inicio','Inicio'],['sucursales','Sucursales'],['catalogo','Catálogo'],['inventario','Inventario'],['produccion','Producción'],['ventas','Punto de Venta'],['tickets','Tickets'],['clientes','Clientes']] as const).map(([key,label])=><button key={key} onClick={()=>{setSection(key);setMobileMenuOpen(false)}} className={`mt-1 block w-full rounded-xl px-3 py-3 text-left text-sm font-medium transition ${section===key?'bg-brand-50 font-semibold text-brand-700':'text-slate-600 hover:bg-slate-50'}`}>{label}</button>)}
         </nav>
-        <div>
+        <div className="min-w-0 max-w-full overflow-x-hidden">
           {section==='inicio'&&<><p className="text-sm font-semibold text-brand-700">Panel de control</p>
           <h1 className="mt-2 text-3xl font-bold tracking-tight text-ink-950">Tu operación empieza aquí</h1>
           <p className="mt-3 max-w-xl text-slate-600">Iniciaste sesión como <strong className="font-semibold text-slate-800">{session.email}</strong> con rol <strong className="font-semibold text-slate-800">{session.membership.role}</strong>.</p>
